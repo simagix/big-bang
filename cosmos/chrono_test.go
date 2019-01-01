@@ -6,11 +6,12 @@ import (
 	"testing"
 
 	"github.com/mongodb/mongo-go-driver/bson"
+	"github.com/simagix/keyhole/mdb"
 )
 
-func TestExpand(t *testing.T) {
+func TestExpandString(t *testing.T) {
 	var err error
-	chaos := Create("testdata/bigbang.json")
+	chaos := Create("testdata/bigbang-string.json")
 	var result = bson.M{}
 	if err = chaos.BigBang().Expand().Exec(&result); err != nil {
 		t.Fatal(err)
@@ -18,11 +19,37 @@ func TestExpand(t *testing.T) {
 	if result["expand"] == nil || result["expand"] == false {
 		t.Fatal("expected true, but got", result["seed"])
 	}
+	t.Log(mdb.Stringify(result), "", "  ")
 }
 
-func TestSeed(t *testing.T) {
+func TestExpandNumber(t *testing.T) {
 	var err error
-	chaos := Create("testdata/bigbang.json")
+	chaos := Create("testdata/bigbang-number.json")
+	var result = bson.M{}
+	if err = chaos.BigBang().Expand().Exec(&result); err != nil {
+		t.Fatal(err)
+	}
+	if result["expand"] == nil || result["expand"] == false {
+		t.Fatal("expected true, but got", result["seed"])
+	}
+	t.Log(mdb.Stringify(result), "", "  ")
+}
+
+func TestSeedString(t *testing.T) {
+	var err error
+	chaos := Create("testdata/bigbang-string.json")
+	var result = bson.M{}
+	if err = chaos.BigBang().Seed().Exec(&result); err != nil {
+		t.Fatal(err)
+	}
+	if result["seed"] == nil || result["seed"] == false {
+		t.Fatal("expected true, but got", result["seed"])
+	}
+}
+
+func TestSeedNumber(t *testing.T) {
+	var err error
+	chaos := Create("testdata/bigbang-number.json")
 	var result = bson.M{}
 	if err = chaos.BigBang().Seed().Exec(&result); err != nil {
 		t.Fatal(err)

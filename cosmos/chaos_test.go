@@ -10,8 +10,17 @@ import (
 	"github.com/mongodb/mongo-go-driver/mongo"
 )
 
-func TestBigBang(t *testing.T) {
-	chaos := Create("testdata/bigbang.json")
+func TestBigBangString(t *testing.T) {
+	chaos := Create("testdata/bigbang-string.json")
+	chaos.SetVerbose(true)
+	chrono := chaos.BigBang()
+	if chrono.Error() != nil {
+		t.Fatal(chrono.Error())
+	}
+}
+
+func TestBigBangNumber(t *testing.T) {
+	chaos := Create("testdata/bigbang-number.json")
 	chaos.SetVerbose(true)
 	chrono := chaos.BigBang()
 	if chrono.Error() != nil {
@@ -22,7 +31,7 @@ func TestBigBang(t *testing.T) {
 func TestGetFields(t *testing.T) {
 	var err error
 	var client *mongo.Client
-	chaos := Create("testdata/bigbang.json")
+	chaos := Create("testdata/bigbang-string.json")
 	chaos.SetVerbose(true)
 	ctx := context.Background()
 	if client, err = mongo.Connect(ctx, "mongodb://localhost/keyhole?replicaSet=replset"); err != nil {

@@ -1,0 +1,15 @@
+{
+  "source": "mongodb://localhost/keyhole?replicaSet=replset",
+  "target": "mongodb://localhost/bigbang?replicaSet=replset",
+  "collections": [{
+    "name": "cars",
+    "total": 500,
+    "lookup": [{
+      "from": "dealers",
+      "total": 10,
+      "localField": "dealer",
+      "foreignField": "_id",
+      "nSeeds": 20
+    }]
+  }]
+}

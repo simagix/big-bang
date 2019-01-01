@@ -5,6 +5,7 @@ package cosmos
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/mongodb/mongo-go-driver/bson"
@@ -24,7 +25,7 @@ type Chaos struct {
 // BigBang builds relationships among collections
 func (c *Chaos) BigBang() *Chrono {
 	var err error
-	chrono := Chrono{config: c.config, verbose: c.verbose, seedsMap: bson.M{}, numSeed: 10}
+	chrono := Chrono{config: c.config, verbose: c.verbose, seedsMap: bson.M{}}
 
 	if c.err != nil {
 		chrono.err = err
@@ -51,16 +52,16 @@ func (c *Chaos) BigBang() *Chrono {
 				chrono.err = err
 				return &chrono
 			}
-			if list, err = c.getFields(templ2, v.LocalField, chrono.numSeed); err != nil {
+			if list, err = c.getFields(templ2, v.LocalField, v.NumSeeds); err != nil {
 				chrono.err = err
 				if c.verbose {
 					log.Println("get source field error", err)
 				}
 				return &chrono
 			}
-			doc1 := bson.M{"template": templ1, v.ForeignField: list}
+			doc1 := bson.M{"$template": templ1, "$total": v.Total, v.ForeignField: list}
 			chrono.seedsMap[v.From] = doc1
-			doc2 := bson.M{"template": templ2, v.LocalField: list}
+			doc2 := bson.M{"$template": templ2, "$total": conf.Total, v.LocalField: list}
 			chrono.seedsMap[conf.Name] = doc2
 			// log.Println(mdb.Stringify(chrono.seedsMap, "", "  "))
 
@@ -108,7 +109,7 @@ func (c *Chaos) getFields(doc bson.M, field string, num int) ([]interface{}, err
 		json.Unmarshal(b, &f)
 		v := make(map[string]interface{})
 		util.RandomizeDocument(&v, f, false)
-		xmap[v[field].(string)] = v
+		xmap[fmt.Sprintf("%v", v[field])] = v
 	}
 
 	for _, v := range xmap {

@@ -1,0 +1,15 @@
+{
+  "source": "mongodb://localhost/keyhole?replicaSet=replset",
+  "target": "mongodb://localhost/bigbang?replicaSet=replset",
+  "collections": [{
+    "name": "favorites",
+    "total": 100,
+    "lookup": [{
+      "from": "lookups",
+      "total": 10,
+      "localField": "favoriteBookId",
+      "foreignField": "_id",
+      "nSeeds": 10
+    }]
+  }]
+}

@@ -11,7 +11,7 @@ import (
 )
 
 func TestCreate(t *testing.T) {
-	chaos := Create("testdata/bigbang.json")
+	chaos := Create("testdata/bigbang-string.json")
 	chaos.SetVerbose(true)
 	if chaos.Error() != nil {
 		t.Log(mdb.Stringify(chaos.config, "", "  "))

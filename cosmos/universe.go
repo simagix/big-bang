@@ -27,6 +27,7 @@ type Lookup struct {
 	From         string `json:"from" bson:"from"`
 	LocalField   string `json:"localField" bson:"localField"`
 	Total        int64  `json:"total" bson:"total"`
+	NumSeeds     int    `json:"nSeeds" bson:"nSeeds"`
 }
 
 // Create parses configuration string
