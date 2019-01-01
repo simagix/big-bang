@@ -3,7 +3,14 @@
 package cosmos
 
 import (
+	"context"
+	"encoding/json"
+	"log"
+
 	"github.com/mongodb/mongo-go-driver/bson"
+	"github.com/mongodb/mongo-go-driver/mongo"
+	"github.com/mongodb/mongo-go-driver/x/network/connstring"
+	"github.com/simagix/keyhole/sim/util"
 )
 
 // Chaos contains configurations
@@ -17,26 +24,46 @@ type Chaos struct {
 // BigBang builds relationships among collections
 func (c *Chaos) BigBang() *Chrono {
 	var err error
+	chrono := Chrono{config: c.config, verbose: c.verbose, seedsMap: bson.M{}, numSeed: 10}
+
 	if c.err != nil {
+		chrono.err = err
+		return &chrono
+	}
+	ctx := context.Background()
+	if chrono.sourceClient, err = mongo.Connect(ctx, c.config.Source); err != nil {
 		return &Chrono{err: c.err}
 	}
-	chrono := Chrono{config: c.config, verbose: c.verbose, seeds: bson.M{}, numSeed: 10}
+	if chrono.targetClient, err = mongo.Connect(ctx, c.config.Target); err != nil {
+		return &Chrono{err: c.err}
+	}
+
 	for _, conf := range c.config.Collections {
 		for _, v := range conf.Lookup {
-			localKey := conf.Name + "/" + v.LocalField
-			foreignKey := v.From + "/" + v.ForeignField
-			mongo := Source(c.config.Source)
-			var list []bson.M
-			if list, err = mongo.getFields(v.From, v.ForeignField, 10); err != nil {
+			var list []interface{}
+			var templ1 bson.M
+			var templ2 bson.M
+			if templ1, err = c.getTemplate(chrono.sourceClient, v.From); err != nil {
 				chrono.err = err
 				return &chrono
 			}
-			chrono.seeds[foreignKey] = list
-			if list, err = mongo.getFields(conf.Name, v.LocalField, 10); err != nil {
+			if templ2, err = c.getTemplate(chrono.sourceClient, conf.Name); err != nil {
 				chrono.err = err
 				return &chrono
 			}
-			chrono.seeds[localKey] = list
+			if list, err = c.getFields(templ2, v.LocalField, chrono.numSeed); err != nil {
+				chrono.err = err
+				if c.verbose {
+					log.Println("get source field error", err)
+				}
+				return &chrono
+			}
+			doc1 := bson.M{"template": templ1, v.ForeignField: list}
+			chrono.seedsMap[v.From] = doc1
+			doc2 := bson.M{"template": templ2, v.LocalField: list}
+			chrono.seedsMap[conf.Name] = doc2
+			// log.Println(mdb.Stringify(chrono.seedsMap, "", "  "))
+
 		}
 	}
 	return &chrono
@@ -49,4 +76,43 @@ func (c *Chaos) Error() error {
 // SetVerbose sets verbose mode
 func (c *Chaos) SetVerbose(verbose bool) {
 	c.verbose = verbose
+}
+
+func (c *Chaos) getTemplate(client *mongo.Client, collection string) (bson.M, error) {
+	var err error
+	cs, err := connstring.Parse(client.ConnectionString())
+	if err != nil {
+		return nil, err
+	}
+
+	if c.verbose {
+		log.Println(client.ConnectionString(), cs.Database, collection)
+	}
+
+	var doc bson.M
+	coll := client.Database(cs.Database).Collection(collection)
+	err = coll.FindOne(context.Background(), nil).Decode(&doc)
+	return doc, err
+}
+
+func (c *Chaos) getFields(doc bson.M, field string, num int) ([]interface{}, error) {
+	if c.verbose {
+		log.Println("{field, num}", field, num)
+	}
+	var err error
+	var list []interface{}
+	var xmap = map[string]bson.M{}
+	for len(xmap) < num {
+		var f interface{}
+		b, _ := json.Marshal(bson.M{field: doc[field]})
+		json.Unmarshal(b, &f)
+		v := make(map[string]interface{})
+		util.RandomizeDocument(&v, f, false)
+		xmap[v[field].(string)] = v
+	}
+
+	for _, v := range xmap {
+		list = append(list, v[field])
+	}
+	return list, err
 }
