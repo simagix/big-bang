@@ -16,9 +16,9 @@ type Config struct {
 
 // Collection -
 type Collection struct {
-	Lookup Lookup `json:"lookup" bson:"lookup"`
-	Name   string `json:"name" bson:"name"`
-	Total  int64  `json:"total" bson:"total"`
+	Lookup []Lookup `json:"lookup" bson:"lookup"`
+	Name   string   `json:"name" bson:"name"`
+	Total  int64    `json:"total" bson:"total"`
 }
 
 // Lookup -
