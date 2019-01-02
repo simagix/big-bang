@@ -26,9 +26,8 @@ type Chaos struct {
 func (c *Chaos) BigBang() *Chrono {
 	var err error
 	chrono := Chrono{config: c.config, verbose: c.verbose, seedsMap: bson.M{}}
-
 	if c.err != nil {
-		chrono.err = err
+		chrono.err = c.err
 		return &chrono
 	}
 	ctx := context.Background()

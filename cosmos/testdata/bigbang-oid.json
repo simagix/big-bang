@@ -1,0 +1,15 @@
+{
+  "source": "mongodb://localhost/keyhole?replicaSet=replset",
+  "target": "mongodb://localhost/bigbang?replicaSet=replset",
+  "collections": [{
+    "name": "users",
+    "total": 10,
+    "lookup": [{
+      "total": 5,
+      "from": "cities",
+      "localField": "city_id",
+      "foreignField": "_id",
+      "nSeeds": 5
+    }]
+  }]
+}
