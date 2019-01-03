@@ -33,15 +33,15 @@ func (c *Chaos) BigBang() *Chrono {
 	}
 	if chrono.sourceClient, err = mdb.NewMongoClient(c.config.Source.URI, c.config.Source.CAFile, c.config.Source.ClientPEM); err != nil {
 		if c.verbose == true {
-			log.Println("connecting to", c.config.Source.URI, " failed: ", c.err)
+			log.Println("connecting to", c.config.Source.URI, " failed: ", err)
 		}
-		return &Chrono{err: c.err}
+		return &Chrono{err: err}
 	}
 	if chrono.targetClient, err = mdb.NewMongoClient(c.config.Target.URI, c.config.Source.CAFile, c.config.Source.ClientPEM); err != nil {
 		if c.verbose == true {
-			log.Println("connecting to", c.config.Target.URI, " failed: ", c.err)
+			log.Println("connecting to", c.config.Target.URI, " failed: ", err)
 		}
-		return &Chrono{err: c.err}
+		return &Chrono{err: err}
 	}
 
 	for _, conf := range c.config.Collections {
@@ -51,14 +51,14 @@ func (c *Chaos) BigBang() *Chrono {
 			var templ2 bson.M
 			if templ1, err = c.getTemplate(chrono.sourceClient, v.From); err != nil {
 				if c.verbose == true {
-					log.Println("getTemplate from", v.From, "failed: ", c.err)
+					log.Println("getTemplate from collection", v.From, "failed: ", err)
 				}
 				chrono.err = err
 				return &chrono
 			}
 			if templ2, err = c.getTemplate(chrono.sourceClient, conf.Name); err != nil {
 				if c.verbose == true {
-					log.Println("getTemplate from", conf.Name, "failed: ", c.err)
+					log.Println("getTemplate from collection", conf.Name, "failed: ", err)
 				}
 				chrono.err = err
 				return &chrono
@@ -93,12 +93,11 @@ func (c *Chaos) SetVerbose(verbose bool) {
 func (c *Chaos) getTemplate(client *mongo.Client, collection string) (bson.M, error) {
 	var err error
 	cs, err := connstring.Parse(client.ConnectionString())
-	if err != nil {
-		return nil, err
-	}
-
 	if c.verbose {
 		log.Println(client.ConnectionString(), cs.Database, collection)
+	}
+	if err != nil {
+		return nil, err
 	}
 
 	var doc bson.M
