@@ -32,9 +32,15 @@ func (c *Chaos) BigBang() *Chrono {
 		return &chrono
 	}
 	if chrono.sourceClient, err = mdb.NewMongoClient(c.config.Source.URI, c.config.Source.CAFile, c.config.Source.ClientPEM); err != nil {
+		if c.verbose == true {
+			log.Println("connecting to", c.config.Source.URI, " failed: ", c.err)
+		}
 		return &Chrono{err: c.err}
 	}
 	if chrono.targetClient, err = mdb.NewMongoClient(c.config.Target.URI, c.config.Source.CAFile, c.config.Source.ClientPEM); err != nil {
+		if c.verbose == true {
+			log.Println("connecting to", c.config.Target.URI, " failed: ", c.err)
+		}
 		return &Chrono{err: c.err}
 	}
 
@@ -44,17 +50,23 @@ func (c *Chaos) BigBang() *Chrono {
 			var templ1 bson.M
 			var templ2 bson.M
 			if templ1, err = c.getTemplate(chrono.sourceClient, v.From); err != nil {
+				if c.verbose == true {
+					log.Println("getTemplate from", v.From, "failed: ", c.err)
+				}
 				chrono.err = err
 				return &chrono
 			}
 			if templ2, err = c.getTemplate(chrono.sourceClient, conf.Name); err != nil {
+				if c.verbose == true {
+					log.Println("getTemplate from", conf.Name, "failed: ", c.err)
+				}
 				chrono.err = err
 				return &chrono
 			}
 			if list, err = c.getFields(templ2, v.LocalField, v.NumSeeds); err != nil {
 				chrono.err = err
 				if c.verbose {
-					log.Println("get source field error", err)
+					log.Println("getFields from", v.LocalField, v.NumSeeds, "failed", err)
 				}
 				return &chrono
 			}
