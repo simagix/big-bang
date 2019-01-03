@@ -1,6 +1,10 @@
 {
-  "source": "mongodb://localhost/keyhole?replicaSet=replset",
-  "target": "mongodb://localhost/bigbang?replicaSet=replset",
+  "source": {
+    "uri": "mongodb://localhost/keyhole?replicaSet=replset"
+  },
+  "target": {
+    "uri": "mongodb://localhost/bigbang?replicaSet=replset"
+  },
   "collections": [{
     "name": "favorites",
     "total": 100,

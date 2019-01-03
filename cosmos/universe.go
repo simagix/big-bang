@@ -9,9 +9,16 @@ import (
 
 // Config -
 type Config struct {
-	Source      string       `json:"source" bson:"source"`
-	Target      string       `json:"target" bson:"target"`
+	Source      MongoConfig  `json:"source" bson:"source"`
+	Target      MongoConfig  `json:"target" bson:"target"`
 	Collections []Collection `json:"collections" bson:"collections"`
+}
+
+// MongoConfig stores mongo configuration
+type MongoConfig struct {
+	URI       string `json:"uri" bson:"uri"`
+	CAFile    string `json:"caFile" bson:"caFile"`
+	ClientPEM string `json:"clientPEM" bson:"clientPEM"`
 }
 
 // Collection -

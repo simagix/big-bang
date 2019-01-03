@@ -11,6 +11,7 @@ import (
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/mongodb/mongo-go-driver/x/network/connstring"
+	"github.com/simagix/keyhole/mdb"
 	"github.com/simagix/keyhole/sim/util"
 )
 
@@ -30,11 +31,10 @@ func (c *Chaos) BigBang() *Chrono {
 		chrono.err = c.err
 		return &chrono
 	}
-	ctx := context.Background()
-	if chrono.sourceClient, err = mongo.Connect(ctx, c.config.Source); err != nil {
+	if chrono.sourceClient, err = mdb.NewMongoClient(c.config.Source.URI, c.config.Source.CAFile, c.config.Source.ClientPEM); err != nil {
 		return &Chrono{err: c.err}
 	}
-	if chrono.targetClient, err = mongo.Connect(ctx, c.config.Target); err != nil {
+	if chrono.targetClient, err = mdb.NewMongoClient(c.config.Target.URI, c.config.Source.CAFile, c.config.Source.ClientPEM); err != nil {
 		return &Chrono{err: c.err}
 	}
 
