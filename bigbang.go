@@ -5,7 +5,7 @@ package main
 import (
 	"flag"
 
-	"github.com/globalsign/mgo/bson"
+	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/simagix/big-bang/cosmos"
 )
 

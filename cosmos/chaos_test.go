@@ -80,7 +80,7 @@ func TestGetFields(t *testing.T) {
 	c := client.Database("keyhole").Collection("dealers")
 	var doc bson.M
 	var list []interface{}
-	if err = c.FindOne(context.Background(), nil).Decode(&doc); err != nil {
+	if err = c.FindOne(context.Background(), bson.D{{}}).Decode(&doc); err != nil {
 		t.Fatal(err)
 	}
 	list, err = chaos.getFields(doc, "_id", 10)

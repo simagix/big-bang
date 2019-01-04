@@ -93,16 +93,16 @@ func (c *Chaos) SetVerbose(verbose bool) {
 func (c *Chaos) getTemplate(client *mongo.Client, collection string) (bson.M, error) {
 	var err error
 	cs, err := connstring.Parse(client.ConnectionString())
-	if c.verbose {
-		log.Println(client.ConnectionString(), cs.Database, collection)
-	}
 	if err != nil {
 		return nil, err
+	}
+	if c.verbose {
+		log.Println("getTemplate", client.ConnectionString(), cs.Database, collection)
 	}
 
 	var doc bson.M
 	coll := client.Database(cs.Database).Collection(collection)
-	err = coll.FindOne(context.Background(), nil).Decode(&doc)
+	err = coll.FindOne(context.Background(), bson.D{{}}).Decode(&doc)
 	return doc, err
 }
 
