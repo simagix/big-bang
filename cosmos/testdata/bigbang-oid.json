@@ -1,19 +1,18 @@
 {
-  "source": {
-    "uri": "mongodb://localhost/keyhole?replicaSet=replset"
-  },
   "target": {
     "uri": "mongodb://localhost/bigbang?replicaSet=replset"
   },
   "collections": [{
     "name": "users",
+    "template": "testdata/templates/users.json",
     "total": 10,
     "lookup": [{
       "total": 5,
       "from": "cities",
       "localField": "city_id",
       "foreignField": "_id",
-      "nSeeds": 5
+      "nSeeds": 5,
+      "template": "testdata/templates/cities.json"
     }]
   }]
 }

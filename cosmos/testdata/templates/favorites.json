@@ -1,0 +1,104 @@
+{
+	"_id" : ObjectId("5c3c73c2d602a5e4f5cc8a71"),
+	"favoriteSport" : "Ski",
+	"favoriteMovie" : "One Flew Over the Cuckoo's Nest",
+	"filler1" : "simagix.simagix.simagix.simagix.simagix.simagix.simagix.simagix.simagix.simagix.",
+	"_search" : "45d2e11b1156579d",
+	"favoritesList" : [
+		{
+			"music" : "Rock",
+			"city" : "Dubai",
+			"book" : "Don Quixote",
+			"movie" : "One Flew Over the Cuckoo's Nest",
+			"sport" : "Ski"
+		},
+		{
+			"sport" : "Figure skating",
+			"music" : "Blues",
+			"city" : "Paris",
+			"book" : "Ulysses",
+			"movie" : "The Shawshank Redemption"
+		},
+		{
+			"sport" : "Soccer",
+			"music" : "Classical",
+			"city" : "Singapore",
+			"book" : "The Odyssey",
+			"movie" : "Casablanca"
+		}
+	],
+	"lastName" : "Harrison",
+	"favoriteSports" : [
+		"Ski",
+		"Figure skating",
+		"Soccer"
+	],
+	"favoriteMusic" : "Rock",
+	"favoriteCity" : "Dubai",
+	"numbers" : [
+		NumberLong(234),
+		NumberLong(965),
+		NumberLong(145),
+		NumberLong(249),
+		NumberLong(479)
+	],
+	"email" : "Robert.D.Harrison@mongodb.com",
+	"firstName" : "Robert",
+	"favoriteMovies" : [
+		"One Flew Over the Cuckoo's Nest",
+		"The Shawshank Redemption",
+		"Casablanca"
+	],
+	"filler2" : "mongodb.mongodb.mongodb.mongodb.mongodb.mongodb.mongodb.mongodb.mongodb.mongodb.",
+	"ts" : ISODate("2019-01-14T11:34:26.446Z"),
+	"favoriteCities" : [
+		"Dubai",
+		"Paris",
+		"Singapore"
+	],
+	"favoriteBooks" : [
+		"Don Quixote",
+		"Ulysses",
+		"The Odyssey"
+	],
+	"favoriteBook" : "Don Quixote",
+	"favoriteBookId" : NumberLong(1103),
+	"number" : NumberLong(789),
+	"Favorites" : {
+		"sport" : "Ski",
+		"musics" : [
+			"Rock",
+			"Blues",
+			"Classical"
+		],
+		"city" : "Dubai",
+		"movie" : "One Flew Over the Cuckoo's Nest",
+		"sports" : [
+			"Ski",
+			"Figure skating",
+			"Soccer"
+		],
+		"music" : "Rock",
+		"cities" : [
+			"Dubai",
+			"Paris",
+			"Singapore"
+		],
+		"books" : [
+			"Don Quixote",
+			"Ulysses",
+			"The Odyssey"
+		],
+		"book" : "Don Quixote",
+		"movies" : [
+			"One Flew Over the Cuckoo's Nest",
+			"The Shawshank Redemption",
+			"Casablanca"
+		]
+	},
+	"favoriteMusics" : [
+		"Rock",
+		"Blues",
+		"Classical"
+	]
+}

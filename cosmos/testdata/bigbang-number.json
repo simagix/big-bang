@@ -1,19 +1,18 @@
 {
-  "source": {
-    "uri": "mongodb://localhost/keyhole?replicaSet=replset"
-  },
   "target": {
     "uri": "mongodb://localhost/bigbang?replicaSet=replset"
   },
   "collections": [{
     "name": "favorites",
+    "template": "testdata/templates/favorites.json",
     "total": 100,
     "lookup": [{
       "from": "lookups",
       "total": 10,
       "localField": "favoriteBookId",
       "foreignField": "_id",
-      "nSeeds": 10
+      "nSeeds": 10,
+      "template": "testdata/templates/lookups.json"
     }]
   }]
 }

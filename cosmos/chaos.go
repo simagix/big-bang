@@ -31,13 +31,7 @@ func (c *Chaos) BigBang() *Chrono {
 		chrono.err = c.err
 		return &chrono
 	}
-	if chrono.sourceClient, err = mdb.NewMongoClient(c.config.Source.URI, c.config.Source.CAFile, c.config.Source.ClientPEM); err != nil {
-		if c.verbose == true {
-			log.Println("connecting to", c.config.Source.URI, " failed: ", err)
-		}
-		return &Chrono{err: err}
-	}
-	if chrono.targetClient, err = mdb.NewMongoClient(c.config.Target.URI, c.config.Source.CAFile, c.config.Source.ClientPEM); err != nil {
+	if chrono.targetClient, err = mdb.NewMongoClient(c.config.Target.URI, c.config.Target.CAFile, c.config.Target.ClientPEM); err != nil {
 		if c.verbose == true {
 			log.Println("connecting to", c.config.Target.URI, " failed: ", err)
 		}
@@ -49,16 +43,16 @@ func (c *Chaos) BigBang() *Chrono {
 			var list []interface{}
 			var templ1 bson.M
 			var templ2 bson.M
-			if templ1, err = c.getTemplate(chrono.sourceClient, v.From); err != nil {
+			if templ1, err = util.GetDocByTemplate(v.Template, true); err != nil {
 				if c.verbose == true {
-					log.Println("getTemplate from collection", v.From, "failed: ", err)
+					log.Println("getTemplateFromFile", v.Template, "failed: ", err)
 				}
 				chrono.err = err
 				return &chrono
 			}
-			if templ2, err = c.getTemplate(chrono.sourceClient, conf.Name); err != nil {
+			if templ2, err = util.GetDocByTemplate(conf.Template, true); err != nil {
 				if c.verbose == true {
-					log.Println("getTemplate from collection", conf.Name, "failed: ", err)
+					log.Println("getTemplateFromFile", conf.Template, "failed: ", err)
 				}
 				chrono.err = err
 				return &chrono
@@ -75,7 +69,6 @@ func (c *Chaos) BigBang() *Chrono {
 			doc2 := bson.M{"$template": templ2, "$total": conf.Total, v.LocalField: list}
 			chrono.seedsMap[conf.Name] = doc2
 			// log.Println(mdb.Stringify(chrono.seedsMap, "", "  "))
-
 		}
 	}
 	return &chrono
@@ -90,14 +83,14 @@ func (c *Chaos) SetVerbose(verbose bool) {
 	c.verbose = verbose
 }
 
-func (c *Chaos) getTemplate(client *mongo.Client, collection string) (bson.M, error) {
+func (c *Chaos) getTemplateFromCollection(client *mongo.Client, collection string) (bson.M, error) {
 	var err error
 	cs, err := connstring.Parse(client.ConnectionString())
 	if err != nil {
 		return nil, err
 	}
 	if c.verbose {
-		log.Println("getTemplate", client.ConnectionString(), cs.Database, collection)
+		log.Println("getTemplateFromCollection", client.ConnectionString(), cs.Database, collection)
 	}
 
 	var doc bson.M
@@ -113,10 +106,20 @@ func (c *Chaos) getFields(doc bson.M, field string, num int) ([]interface{}, err
 	var err error
 	var list []interface{}
 	var xmap = map[string]bson.M{}
-	for len(xmap) < num {
+	var total = 1000
+	for len(xmap) < num && total < 2024 {
+		total++
 		var f interface{}
-		b, _ := json.Marshal(bson.M{field: doc[field]})
-		json.Unmarshal(b, &f)
+		value := doc[field]
+		_, ok := value.(string)
+		if ok {
+			value = fmt.Sprintf("%s_%d", value, total)
+			b, _ := json.Marshal(bson.M{field: value})
+			json.Unmarshal(b, &f)
+		} else {
+			b, _ := json.Marshal(bson.M{field: total})
+			json.Unmarshal(b, &f)
+		}
 		v := make(map[string]interface{})
 		util.RandomizeDocument(&v, f, false)
 		xmap[fmt.Sprintf("%v", v[field])] = v

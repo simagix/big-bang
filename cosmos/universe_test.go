@@ -23,7 +23,7 @@ func TestCreate(t *testing.T) {
 	var cfg Config
 	bson.Unmarshal(b, &cfg)
 
-	if cfg.Source.URI != doc["source"].(bson.M)["uri"] {
-		t.Fatal("expected", doc["source"].(bson.M)["uri"], ", but got", cfg.Source.URI)
+	if cfg.Target.URI != doc["target"].(bson.M)["uri"] {
+		t.Fatal("expected", doc["target"].(bson.M)["uri"], ", but got", cfg.Target.URI)
 	}
 }

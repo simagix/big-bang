@@ -1,9 +1,4 @@
 {
-  "source": {
-    "uri": "mongodb://localhost/keyhole?replicaSet=replset",
-    "caFile": "",
-    "clientPEM": ""
-  },
   "target": {
     "uri": "mongodb://localhost/bigbang?replicaSet=replset",
     "caFile": "",
@@ -11,13 +6,15 @@
   },
   "collections": [{
     "name": "cars",
+    "template": "testdata/templates/cars.json",
     "total": 500,
     "lookup": [{
       "from": "dealers",
       "total": 10,
       "localField": "dealer",
       "foreignField": "_id",
-      "nSeeds": 20
+      "nSeeds": 20,
+      "template": "testdata/templates/dealers.json"
     }]
   }]
 }

@@ -53,7 +53,7 @@ func TestBigBangString(t *testing.T) {
 	}
 }
 
-func TestGetTemplate(t *testing.T) {
+func TestGetTemplateFromCollection(t *testing.T) {
 	var err error
 	var client *mongo.Client
 	chaos := Create("testdata/bigbang-string.json")
@@ -63,7 +63,7 @@ func TestGetTemplate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err = chaos.getTemplate(client, "dealers"); err != nil {
+	if _, err = chaos.getTemplateFromCollection(client, "dealers"); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -87,7 +87,7 @@ func TestGetFields(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(list) != 10 {
+	if len(list) > 10 {
 		t.Fatal(err)
 	}
 }

@@ -16,14 +16,15 @@ import (
 
 // Chrono contains chronical events/info
 type Chrono struct {
-	config       Config
-	err          error
-	isExpand     bool
-	isSeed       bool
-	seedsMap     bson.M
-	sourceClient *mongo.Client
-	targetClient *mongo.Client
-	verbose      bool
+	config         Config
+	err            error
+	isExpand       bool
+	isSeed         bool
+	seedsMap       bson.M
+	targetClient   *mongo.Client
+	templateSource string
+	templateLookup string
+	verbose        bool
 }
 
 func (c *Chrono) Error() error {

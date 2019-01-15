@@ -9,7 +9,6 @@ import (
 
 // Config -
 type Config struct {
-	Source      MongoConfig  `json:"source" bson:"source"`
 	Target      MongoConfig  `json:"target" bson:"target"`
 	Collections []Collection `json:"collections" bson:"collections"`
 }
@@ -23,9 +22,10 @@ type MongoConfig struct {
 
 // Collection -
 type Collection struct {
-	Lookup []Lookup `json:"lookup" bson:"lookup"`
-	Name   string   `json:"name" bson:"name"`
-	Total  int64    `json:"total" bson:"total"`
+	Lookup   []Lookup `json:"lookup" bson:"lookup"`
+	Name     string   `json:"name" bson:"name"`
+	Template string   `json:"template" bson:"template"`
+	Total    int64    `json:"total" bson:"total"`
 }
 
 // Lookup -
@@ -33,6 +33,7 @@ type Lookup struct {
 	ForeignField string `json:"foreignField" bson:"foreignField"`
 	From         string `json:"from" bson:"from"`
 	LocalField   string `json:"localField" bson:"localField"`
+	Template     string `json:"template" bson:"template"`
 	Total        int64  `json:"total" bson:"total"`
 	NumSeeds     int    `json:"nSeeds" bson:"nSeeds"`
 }

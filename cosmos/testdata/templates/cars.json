@@ -1,0 +1,31 @@
+{
+	"_id" : ObjectId("5c3c73c5d602a5e4f5cc8ebc"),
+	"dealer" : "DEALER-1",
+	"brand" : "Ford",
+	"color" : "Green",
+	"style" : "Minivan",
+	"year" : NumberLong(2019),
+	"used" : false,
+	"filters" : [
+		{
+			"k" : "brand",
+			"v" : "Ford"
+		},
+		{
+			"v" : "Green",
+			"k" : "color"
+		},
+		{
+			"k" : "style",
+			"v" : "Minivan"
+		},
+		{
+			"v" : NumberLong(2019),
+			"k" : "year"
+		},
+		{
+			"k" : "used",
+			"v" : false
+		}
+	]
+}
