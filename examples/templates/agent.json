@@ -1,0 +1,7 @@
+{
+	"name" : "John Doe",
+	"agencyID" : 123456,
+	"email": "John.Doe@xyz.com",
+	"title": "Sales Associate",
+	"skills": [101, 105]
+}

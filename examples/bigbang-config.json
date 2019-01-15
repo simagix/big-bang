@@ -1,0 +1,27 @@
+{
+  "target": {
+    "uri": "mongodb://localhost/bigbang?replicaSet=replset",
+    "caFile": "",
+    "clientPEM": ""
+  },
+  "collections": [{
+    "name": "agents",
+    "template": "examples/templates/agent.json",
+    "total": 1000,
+    "lookup": [{
+      "total": 10,
+      "from": "agencies",
+      "localField": "agencyID",
+      "foreignField": "_id",
+      "nSeeds": 10,
+      "template": "examples/templates/agency.json"
+    }, {
+      "total": 20,
+      "from": "expertises",
+      "localField": "skills",
+      "foreignField": "_id",
+      "nSeeds": 20,
+      "template": "examples/templates/expertise.json"
+    }]
+  }]
+}
