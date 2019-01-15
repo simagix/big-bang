@@ -9,6 +9,7 @@ import (
 	"log"
 
 	"github.com/mongodb/mongo-go-driver/bson"
+	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/mongodb/mongo-go-driver/x/network/connstring"
 	"github.com/simagix/keyhole/mdb"
@@ -43,6 +44,9 @@ func (c *Chaos) BigBang() *Chrono {
 			var list []interface{}
 			var templ1 bson.M
 			var templ2 bson.M
+			if v.ForeignField == "_id" && v.NumSeeds < v.Total {
+				v.NumSeeds = v.Total
+			}
 			if templ1, err = util.GetDocByTemplate(v.Template, true); err != nil {
 				if c.verbose == true {
 					log.Println("getTemplateFromFile", v.Template, "failed: ", err)
@@ -66,9 +70,14 @@ func (c *Chaos) BigBang() *Chrono {
 			}
 			doc1 := bson.M{"$template": templ1, "$total": v.Total, v.ForeignField: list}
 			chrono.seedsMap[v.From] = doc1
-			doc2 := bson.M{"$template": templ2, "$total": conf.Total, v.LocalField: list}
-			chrono.seedsMap[conf.Name] = doc2
-			// log.Println(mdb.Stringify(chrono.seedsMap, "", "  "))
+			if chrono.seedsMap[conf.Name] == nil {
+				doc2 := bson.M{"$template": templ2, "$total": conf.Total, v.LocalField: list}
+				chrono.seedsMap[conf.Name] = doc2
+			} else {
+				m := chrono.seedsMap[conf.Name].(primitive.M)
+				m[v.LocalField] = list
+				chrono.seedsMap[conf.Name] = m
+			}
 		}
 	}
 	return &chrono
@@ -99,7 +108,7 @@ func (c *Chaos) getTemplateFromCollection(client *mongo.Client, collection strin
 	return doc, err
 }
 
-func (c *Chaos) getFields(doc bson.M, field string, num int) ([]interface{}, error) {
+func (c *Chaos) getFields(doc bson.M, field string, num int64) ([]interface{}, error) {
 	if c.verbose {
 		log.Println("{field, num}", field, num)
 	}
@@ -107,7 +116,7 @@ func (c *Chaos) getFields(doc bson.M, field string, num int) ([]interface{}, err
 	var list []interface{}
 	var xmap = map[string]bson.M{}
 	var total = 1000
-	for len(xmap) < num && total < 2024 {
+	for len(xmap) < int(num) && total < 2024 {
 		total++
 		var f interface{}
 		value := doc[field]

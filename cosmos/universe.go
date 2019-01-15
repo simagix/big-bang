@@ -35,7 +35,7 @@ type Lookup struct {
 	LocalField   string `json:"localField" bson:"localField"`
 	Template     string `json:"template" bson:"template"`
 	Total        int64  `json:"total" bson:"total"`
-	NumSeeds     int    `json:"nSeeds" bson:"nSeeds"`
+	NumSeeds     int64  `json:"nSeeds" bson:"nSeeds"`
 }
 
 // Create parses configuration string

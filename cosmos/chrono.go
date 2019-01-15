@@ -59,7 +59,7 @@ func (c *Chrono) Exec(result interface{}) error {
 		delete(doc, "_id")
 		b, _ := json.Marshal(doc)
 		collection := c.targetClient.Database(cs.Database).Collection(k)
-		for i := int64(0); i < num; i++ {
+		for i := 0; i < int(num); i++ {
 			var f interface{}
 			json.Unmarshal(b, &f)
 			v := make(map[string]interface{})
@@ -68,8 +68,17 @@ func (c *Chrono) Exec(result interface{}) error {
 				if attr == "$template" || attr == "$total" {
 					continue
 				}
-				length := int64(len(val.([]interface{})))
-				v[attr] = val.([]interface{})[i%length]
+				length := len(val.([]interface{}))
+				values, ok := v[attr].([]interface{})
+				if ok {
+					var arr []interface{}
+					for n := 0; n < len(values); n++ {
+						arr = append(arr, val.([]interface{})[(i+n)%length])
+					}
+					v[attr] = arr
+				} else {
+					v[attr] = val.([]interface{})[i%length]
+				}
 			}
 			if v["_id"] == nil {
 				v["_id"] = primitive.NewObjectID()
