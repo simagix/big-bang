@@ -126,7 +126,19 @@ func (c *Chaos) getFields(doc bson.M, field string, num int64) ([]interface{}, e
 			b, _ := json.Marshal(bson.M{field: value})
 			json.Unmarshal(b, &f)
 		} else {
-			b, _ := json.Marshal(bson.M{field: total})
+			b, _ := json.Marshal(bson.M{field: doc[field]})
+			arr, chk := doc[field].([]interface{})
+			if total > 1500 {
+				b, _ = json.Marshal(bson.M{field: total})
+			} else {
+				if chk {
+					if len(arr) > 0 {
+						b, _ = json.Marshal(bson.M{field: arr[0]})
+					} else {
+						b, _ = json.Marshal(bson.M{field: total})
+					}
+				}
+			}
 			json.Unmarshal(b, &f)
 		}
 		v := make(map[string]interface{})
