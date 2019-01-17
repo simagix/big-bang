@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 
 	"github.com/mongodb/mongo-go-driver/bson"
@@ -40,38 +41,51 @@ func (c *Chaos) BigBang() *Chrono {
 	}
 
 	for _, conf := range c.config.Collections {
+		var srcTempl bson.M
+		var data []byte
+		var firstDoc = bson.M{}
+		if data, err = ioutil.ReadFile(conf.Template); err != nil {
+			chrono.err = err
+			return &chrono
+		}
+		json.Unmarshal(data, &firstDoc)
+		if srcTempl, err = util.GetRandomizedDoc(data, true); err != nil {
+			if c.verbose == true {
+				log.Println("getTemplateFromFile", conf.Template, "failed: ", err)
+			}
+			chrono.err = err
+			return &chrono
+		}
 		for _, v := range conf.Lookup {
 			var list []interface{}
-			var templ1 bson.M
-			var templ2 bson.M
+			var templ bson.M
 			if v.ForeignField == "_id" && v.NumSeeds < v.Total {
 				v.NumSeeds = v.Total
 			}
-			if templ1, err = util.GetDocByTemplate(v.Template, true); err != nil {
+			var fDoc = bson.M{}
+			if data, err = ioutil.ReadFile(v.Template); err != nil {
+				chrono.err = err
+				return &chrono
+			}
+			json.Unmarshal(data, &fDoc)
+			if templ, err = util.GetRandomizedDoc(data, true); err != nil {
 				if c.verbose == true {
 					log.Println("getTemplateFromFile", v.Template, "failed: ", err)
 				}
 				chrono.err = err
 				return &chrono
 			}
-			if templ2, err = util.GetDocByTemplate(conf.Template, true); err != nil {
-				if c.verbose == true {
-					log.Println("getTemplateFromFile", conf.Template, "failed: ", err)
-				}
-				chrono.err = err
-				return &chrono
-			}
-			if list, err = c.getFields(templ2, v.LocalField, v.NumSeeds); err != nil {
+			if list, err = c.getFields(srcTempl, v.LocalField, v.NumSeeds); err != nil {
 				chrono.err = err
 				if c.verbose {
 					log.Println("getFields from", v.LocalField, v.NumSeeds, "failed", err)
 				}
 				return &chrono
 			}
-			doc1 := bson.M{"$template": templ1, "$total": v.Total, v.ForeignField: list}
+			doc1 := bson.M{"$template": templ, "$total": v.Total, v.ForeignField: list, "$firstDoc": fDoc}
 			chrono.seedsMap[v.From] = doc1
 			if chrono.seedsMap[conf.Name] == nil {
-				doc2 := bson.M{"$template": templ2, "$total": conf.Total, v.LocalField: list}
+				doc2 := bson.M{"$template": srcTempl, "$total": conf.Total, v.LocalField: list, "$firstDoc": firstDoc}
 				chrono.seedsMap[conf.Name] = doc2
 			} else {
 				m := chrono.seedsMap[conf.Name].(primitive.M)

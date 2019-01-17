@@ -16,15 +16,13 @@ import (
 
 // Chrono contains chronical events/info
 type Chrono struct {
-	config         Config
-	err            error
-	isExpand       bool
-	isSeed         bool
-	seedsMap       bson.M
-	targetClient   *mongo.Client
-	templateSource string
-	templateLookup string
-	verbose        bool
+	config       Config
+	err          error
+	isExpand     bool
+	isSeed       bool
+	seedsMap     bson.M
+	targetClient *mongo.Client
+	verbose      bool
 }
 
 func (c *Chrono) Error() error {
@@ -56,6 +54,8 @@ func (c *Chrono) Exec(result interface{}) error {
 		}
 		var doc = data["$template"].(bson.M)
 		var mdocs []interface{}
+		mdocs = append(mdocs, data["$firstDoc"].(bson.M))
+		num--
 		delete(doc, "_id")
 		b, _ := json.Marshal(doc)
 		collection := c.targetClient.Database(cs.Database).Collection(k)
@@ -65,7 +65,7 @@ func (c *Chrono) Exec(result interface{}) error {
 			v := make(map[string]interface{})
 			util.RandomizeDocument(&v, f, false)
 			for attr, val := range data {
-				if attr == "$template" || attr == "$total" {
+				if attr[0] == '$' {
 					continue
 				}
 				length := len(val.([]interface{}))
