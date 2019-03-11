@@ -7,11 +7,11 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/bson/primitive"
-	"github.com/mongodb/mongo-go-driver/mongo"
-	"github.com/mongodb/mongo-go-driver/x/network/connstring"
 	"github.com/simagix/keyhole/sim/util"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/x/network/connstring"
 )
 
 // Chrono contains chronical events/info
@@ -41,7 +41,7 @@ func (c *Chrono) Exec(result interface{}) error {
 	res["expand"] = c.isExpand
 	res["seed"] = c.isSeed
 
-	if cs, err = connstring.Parse(c.targetClient.ConnectionString()); err != nil {
+	if cs, err = connstring.Parse(c.config.Target.URI); err != nil {
 		return err
 	}
 

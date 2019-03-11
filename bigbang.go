@@ -5,8 +5,8 @@ package main
 import (
 	"flag"
 
-	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/simagix/big-bang/cosmos"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func main() {

@@ -6,12 +6,13 @@ import (
 	"context"
 	"testing"
 
-	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/bson/primitive"
-	"github.com/mongodb/mongo-go-driver/mongo"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var sourceURI = "mongodb://localhost/keyhole?replicaSet=replset"
+var sourceURI = "mongodb://localhost/keyhole?replicaSet=replset&authSource=admin"
 var sourceDB = "keyhole"
 
 func TestBigBangNumber(t *testing.T) {
@@ -27,7 +28,7 @@ func TestBigBangObjectID(t *testing.T) {
 	var err error
 	var client *mongo.Client
 	ctx := context.Background()
-	if client, err = mongo.Connect(ctx, sourceURI); err != nil {
+	if client, err = mongo.Connect(ctx, options.Client().ApplyURI(sourceURI)); err != nil {
 		t.Fatal(err)
 	}
 	cityID := primitive.NewObjectID()
@@ -59,7 +60,7 @@ func TestGetTemplateFromCollection(t *testing.T) {
 	chaos := Create("testdata/bigbang-string.json")
 	chaos.SetVerbose(true)
 	ctx := context.Background()
-	if client, err = mongo.Connect(ctx, sourceURI); err != nil {
+	if client, err = mongo.Connect(ctx, options.Client().ApplyURI(sourceURI)); err != nil {
 		t.Fatal(err)
 	}
 
@@ -74,7 +75,7 @@ func TestGetFields(t *testing.T) {
 	chaos := Create("testdata/bigbang-string.json")
 	chaos.SetVerbose(true)
 	ctx := context.Background()
-	if client, err = mongo.Connect(ctx, sourceURI); err != nil {
+	if client, err = mongo.Connect(ctx, options.Client().ApplyURI(sourceURI)); err != nil {
 		t.Fatal(err)
 	}
 	c := client.Database("keyhole").Collection("dealers")

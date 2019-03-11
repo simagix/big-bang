@@ -6,8 +6,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/simagix/keyhole/mdb"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func TestCreate(t *testing.T) {

@@ -5,8 +5,8 @@ package cosmos
 import (
 	"testing"
 
-	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/simagix/keyhole/mdb"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func TestExpandString(t *testing.T) {

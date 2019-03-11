@@ -9,12 +9,12 @@ import (
 	"io/ioutil"
 	"log"
 
-	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/bson/primitive"
-	"github.com/mongodb/mongo-go-driver/mongo"
-	"github.com/mongodb/mongo-go-driver/x/network/connstring"
 	"github.com/simagix/keyhole/mdb"
 	"github.com/simagix/keyhole/sim/util"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/x/network/connstring"
 )
 
 // Chaos contains configurations
@@ -108,12 +108,12 @@ func (c *Chaos) SetVerbose(verbose bool) {
 
 func (c *Chaos) getTemplateFromCollection(client *mongo.Client, collection string) (bson.M, error) {
 	var err error
-	cs, err := connstring.Parse(client.ConnectionString())
+	cs, err := connstring.Parse(c.config.Target.URI)
 	if err != nil {
 		return nil, err
 	}
 	if c.verbose {
-		log.Println("getTemplateFromCollection", client.ConnectionString(), cs.Database, collection)
+		log.Println("getTemplateFromCollection", c.config.Target.URI, cs.Database, collection)
 	}
 
 	var doc bson.M
